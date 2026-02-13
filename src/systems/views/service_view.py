@@ -24,6 +24,13 @@ logger = get_logger(__name__)
                 location=OpenApiParameter.PATH,
                 description="System's UUID"
             ),
+            OpenApiParameter(
+                name="api-token", 
+                type=str, 
+                location=OpenApiParameter.HEADER,
+                required=False,
+                description="Bot's API Token"
+            ),
         ]
     ),
     create=extend_schema(

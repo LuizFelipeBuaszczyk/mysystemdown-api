@@ -2,24 +2,28 @@ from rest_framework.permissions import BasePermission
 from django.contrib.auth.models import Group
 from iam.utils.viewaction_map import get_perm
 
-from systems.models import Service
+from iam.authentication.token_auth import TokenAuthentication
 
+BOT_ACTIONS = ["list"]
 class ServicePermission(BasePermission):
     
     def has_permission(self, request, view):
         system_pk = view.kwargs.get('system_pk', None)
+        
+        codename = get_perm(view.action)
+        
+        if not request.user.is_authenticated:
+            if view.action not in BOT_ACTIONS:
+                return False
+            return TokenAuthentication.validate_bot_token(request.headers, system_pk=system_pk)
+        
+        return Group.objects.filter(
+            memberships__user=request.user,
+            memberships__tenant=request.tenant,
+            permissions__codename=f"{codename}_service"
+        ).exists()
+              
 
-        if system_pk:
-            codename = get_perm(view.action)
-            return Group.objects.filter(
-                memberships__user=request.user,
-                memberships__tenant=request.tenant,
-                permissions__codename=f"{codename}_service"
-            ).exists()
-            
-        return False
-
-    
     def has_object_permission(self, request, view, obj):       
         service = obj.system.memberships.filter(
             user=request.user

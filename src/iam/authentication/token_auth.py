@@ -16,7 +16,7 @@ class TokenAuthentication:
     
     @staticmethod
     def validate_bot_token(header: dict, **kwargs) -> bool :
-        logger.debug(f"Starting TokenAuthentication validate_bot_token - header: {header}")
+        logger.debug(f"Starting TokenAuthentication validate_bot_token")
         """Validate API Token for bot"""
         api_token = header.get("api-token", None)
         
@@ -28,7 +28,6 @@ class TokenAuthentication:
         
         prefix = api_token[len(PREFIX_BOT_TOKEN):len(PREFIX_BOT_TOKEN)+10]        
         token = api_token[len(PREFIX_BOT_TOKEN) + len(prefix) + 1:]
-        
     
         bot = BotRepository.get_bot_by_prefix(prefix)  
               
@@ -41,6 +40,10 @@ class TokenAuthentication:
         if kwargs.get('service_pk'):
             if not bot.system.services.filter(id=kwargs.get('service_pk')).exists():
                 raise PermissionDenied("You don't have permission to access this service")
+
+        if kwargs.get('system_pk'):
+            if not str(bot.system.id) == kwargs.get('system_pk'):
+                raise PermissionDenied("You don't have permission to access this system")
         
         return True
     
