@@ -24,6 +24,7 @@ def test_list_memberships(tenant_client, memberships, auth_user):
     url = reverse("tenant-memberships-list")
     
     response = tenant_client.get(path=url)
+    print(response)
     assert response.status_code == 200
     assert len(response.data) == 3
     assert response.data[0]["user"]["id"] == str(auth_user.id)

@@ -5,6 +5,26 @@ from rest_framework.test import APIClient
 from django.core.management import call_command
 from django_tenants.utils import schema_context
 
+@pytest.fixture(autouse=True)
+def celery_eager(settings):
+    """
+    - CELERY_TASK_ALWAYS_EAGER: Serve para desabilitar o .delay() durante os testes, executando-as de forma sincrona
+    - CELERY_TASK_EAGER_PROPAGATES: Serve para desabilitar possiveis erros durante a execução da task
+    """
+    settings.CELERY_TASK_ALWAYS_EAGER = True
+    settings.CELERY_TASK_EAGER_PROPAGATES = True
+
+@pytest.fixture(autouse=True)
+def disable_cache(settings):
+    """
+    Serve para desabilitar o cache durante os testes, para garantir que os testes sejam executados com o cache desligado
+    """
+    settings.CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
+
 @pytest.fixture(scope="session")
 def public_tenant(django_db_setup, django_db_blocker):
     """Inicializa setup inicial para os testes.
