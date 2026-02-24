@@ -14,6 +14,12 @@ class ServiceRepository:
         return Service.objects.filter(id=service_id).first()
     
     @staticmethod
+    def save(service: Service):
+        logger.debug(f"Starting ServiceRepository save - service_id: {service.id}")
+        service.save()
+        return service
+
+    @staticmethod
     def destroy(service: Service):
         logger.debug(f"Starting ServiceRepository destroy - service_id: {service.id}")
         return service.delete()

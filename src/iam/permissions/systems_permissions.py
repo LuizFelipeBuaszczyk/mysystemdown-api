@@ -17,8 +17,8 @@ class SystemPermission(BasePermission):
         
         membership = Membership.objects.filter(
             user=request.user,
-            system=obj
-        ).select_related("role").first()
+            tenant=request.tenant
+        ).select_related("group").first()
 
         if not membership:
             return False
@@ -26,7 +26,6 @@ class SystemPermission(BasePermission):
         role = membership.group
 
         action_perm_map = {
-            "list": "view_system",
             "retrieve": "view_system",
             "update": "change_system",
             "partial_update": "change_system",

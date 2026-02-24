@@ -9,3 +9,9 @@ class ServiceReadSerializer(serializers.ModelSerializer):
 class ServiceDeleteSerializer(serializers.Serializer):
     message = serializers.CharField()
     deleted_id = serializers.UUIDField()
+
+class ServiceUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ["title", "url", "description", "is_active", "health_check_interval"]
+        

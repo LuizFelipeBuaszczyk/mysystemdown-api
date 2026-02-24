@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission
 from django.contrib.auth.models import Group
+from iam.models import Membership 
 from iam.utils.viewaction_map import get_perm
 
 from iam.authentication.token_auth import TokenAuthentication
@@ -24,15 +25,16 @@ class ServicePermission(BasePermission):
         ).exists()
               
 
-    def has_object_permission(self, request, view, obj):       
-        service = obj.system.memberships.filter(
+    def has_object_permission(self, request, view, obj):  
+        membership = Membership.objects.filter(
+            tenant=request.tenant,
             user=request.user
         ).select_related("group").first()
         
-        if not service:
+        if not membership:
             return False
         
-        role = service.group
+        role = membership.group
 
         action_perm_map = {
             "retrieve": "view_service",
