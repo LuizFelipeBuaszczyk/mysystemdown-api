@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 
 from iam.utils.viewaction_map import get_perm
 from systems.models import Bot
+from iam.models import Membership
 
 class BotPermission(BasePermission):
     
@@ -15,18 +16,17 @@ class BotPermission(BasePermission):
         ).exists()
     
     def has_object_permission(self, request, view, obj):
-        bot = Bot.objects.filter(
+        member = Membership.objects.filter(
             user=request.user,
-            system=obj
-        ).select_related("role").first()
+            tenant=request.tenant
+        ).select_related("group").first()
 
-        if not bot:
+        if not member:
             return False
 
-        role = bot.group
+        role = member.group
 
         action_perm_map = {
-            "list": "view_bot",
             "retrieve": "view_bot",
             "update": "change_bot",
             "partial_update": "change_bot",

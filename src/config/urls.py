@@ -31,5 +31,6 @@ urlpatterns = [
     path('systems/', include('systems.urls')),
     path('services/', include('services.urls')),
     path('users/', include('users.urls')),
-    path('tenants/', include('tenants.urls'))
+    path('tenants/', include('tenants.urls')),
+    path('bots/', include('bots.urls')),
 ]

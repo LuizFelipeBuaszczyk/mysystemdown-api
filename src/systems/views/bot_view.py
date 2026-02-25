@@ -91,19 +91,3 @@ class BotViewSet(GenericViewSet):
             BotReadCreateSerializer(bot).data,
             status=status.HTTP_201_CREATED
         )
-        
-    # TODO: Novo APP bots para manipulação específica do objeto Bot
-    # def destroy(self, request, system_pk: UUID, pk: UUID):
-    #     system = get_object_or_404(System.objects.filter(memberships__user=request.user), id=system_pk)
-    #     bot = get_object_or_404(Bot, id=pk)
-
-    #     BotService.delete_bot(bot=bot)
-        
-    #     serializer = BotDeleteSerializer({
-    #         "message": "Bot deleted successfully",
-    #         "deleted_id": pk
-    #     })
-    #     return Response(
-    #         serializer.data,
-    #         status=status.HTTP_200_OK
-    #         )
