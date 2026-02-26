@@ -21,3 +21,9 @@ class UserRepository:
     @staticmethod
     def get_user_by_email(email: str):
         return User.objects.filter(email=email).values()
+    
+    @staticmethod
+    def save_user(user: User):
+        logger.debug(f"Starting repository save_user - user_id: {user.id}")
+        user.save()
+        return user
