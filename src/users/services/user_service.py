@@ -1,3 +1,4 @@
+from datetime import datetime
 from users.repositories.user_repository import UserRepository
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -17,6 +18,21 @@ class UserService:
         logger.debug(f"Starting service update_user - user_id: {user.id}")
 
         for field, value in data.items():
+            if field == "password":
+                user.previous_password = user.password
+                user.password_change_at = datetime.now()
+                user.set_password(value)
+                
+                reset_password_token = create_token_jwt({"id": str(user.id)})
+                context = {
+                    "username": user.first_name + " " + user.last_name,
+                    "reset_password_url": f"{settings.DOMAIN_URL}/auth/password-reset?token={reset_password_token}"
+                }
+                send_email.delay("Password Changed", user.email, EmailType.RESET_ACCOUNT_PASSWORD.value, context)
+                continue
+
+
+
             setattr(user, field, value)
 
         return UserRepository.save_user(user)

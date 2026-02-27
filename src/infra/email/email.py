@@ -10,6 +10,7 @@ logger = get_logger(__name__)
 
 class EmailType(Enum):
     CONFIRM_EMAIL_USER = 'confirm-user-email'
+    RESET_ACCOUNT_PASSWORD = 'reset-account-password'
 
 class Email:
     

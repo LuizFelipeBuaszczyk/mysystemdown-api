@@ -22,7 +22,7 @@ logger = get_logger(__name__)
                 name="token",
                 type=str,
                 required=True,
-                location=OpenApiParameter.PATH
+                location=OpenApiParameter.QUERY
             )
         ]
     )

@@ -17,7 +17,7 @@ class AuthService:
     
     @staticmethod
     def login(data: dict):
-        logger.info(f"Starting AuthService login - email: {data['email']}")
+        logger.debug(f"Starting AuthService login - email: {data['email']}")
         email = data.get("email")
         password = data.get("password")
         
@@ -39,7 +39,7 @@ class AuthService:
         
     @staticmethod
     def refresh_token(data: dict):
-        logger.info(f"Starting AuthService refresh_token - refresh: {data['refresh']}")
+        logger.debug(f"Starting AuthService refresh_token - refresh: {data['refresh']}")
         try:
             refresh = RefreshToken(data["refresh"])
 
@@ -53,7 +53,7 @@ class AuthService:
         
     @staticmethod
     def confirm_user(data: dict):
-        logger.info(f"Starting AuthService confirm_user - token: {data['token']}")
+        logger.debug(f"Starting AuthService confirm_user - token: {data['token']}")
         token = data.get("token", "")
         decode_jwt = TokenAuthentication.decode_jwt(token)
         
@@ -66,3 +66,16 @@ class AuthService:
         
         return user
         
+    @staticmethod
+    def reset_password(data: dict):
+        logger.debug(f"Starting AuthService reset_password - token: {data['token']}")
+        token = data.get("token", "")
+        decode_jwt = TokenAuthentication.decode_jwt(token)
+        
+        if not decode_jwt["id"]:
+            raise InvalidTokenError()
+                
+        user = UserRepository.get_user_by_id(decode_jwt["id"])
+        user.password(user.previous_password)
+        
+        return UserRepository.save_user(user)
