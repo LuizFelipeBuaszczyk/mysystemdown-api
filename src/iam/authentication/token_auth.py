@@ -1,6 +1,7 @@
 import jwt
 from django.contrib.auth.hashers import check_password
 from django.conf import settings
+from datetime import datetime, timezone, timedelta
 
 from iam.exceptions import InvalidApiTokenError, PermissionDenied
 
@@ -50,6 +51,8 @@ class TokenAuthentication:
     @staticmethod
     def create_token_jwt(data: dict) -> str:
         logger.debug(f"Starting TokenAuthentication create_token_jwt - data: {data}")
+        data['exp'] = int((datetime.now(timezone.utc) + timedelta(days=1)).timestamp())
+
         return jwt.encode(
             data, 
             settings.SECRET_KEY, 
@@ -63,7 +66,7 @@ class TokenAuthentication:
             payload = jwt.decode(
                 token, 
                 settings.SECRET_KEY, 
-                algorithms=['HS256']
+                algorithms=['HS256'],
             )
             return payload
         except jwt.ExpiredSignatureError:
