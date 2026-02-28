@@ -49,7 +49,7 @@ class AuthService:
             }
 
         except TokenError:
-            raise BusinessRuleError("Refresh token inválido ou expirado")
+            raise BusinessRuleError("Refresh token is invalid or expired")
         
     @staticmethod
     def confirm_user(data: dict):
@@ -76,6 +76,11 @@ class AuthService:
             raise InvalidTokenError()
                 
         user = UserRepository.get_user_by_id(decode_jwt["id"])
-        user.password(user.previous_password)
+
+        if not user.previous_password:
+            raise BusinessRuleError("Password already reset")
+
+        user.password = user.previous_password
+        user.previous_password = None
         
         return UserRepository.save_user(user)

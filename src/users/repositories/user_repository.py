@@ -7,6 +7,7 @@ class UserRepository:
     
     @staticmethod
     def get_user_by_id(user_id: int) -> User:
+        logger.debug(f"Starting repository get_user_by_id - user_id: {user_id}")
         return User.objects.get(id=user_id)
     
     @staticmethod

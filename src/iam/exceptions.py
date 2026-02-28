@@ -1,4 +1,6 @@
 from config.exceptions import AuthenticationError
+from config.exceptions import BusinessRuleError
+
 class InvalidCredentialsError(AuthenticationError):
     default_detail = "Invalid credentials"
     default_code = "invalid_credentials"
