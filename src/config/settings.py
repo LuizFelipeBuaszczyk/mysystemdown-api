@@ -44,6 +44,7 @@ SHARED_APPS = [
     'django_tenants',
     'tenants',
 
+    'corsheaders',
     'rest_framework',
     'drf_spectacular',
     'django.contrib.admin',
@@ -89,6 +90,7 @@ SPECTACULAR_SETTINGS = {
 AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -98,6 +100,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# TODO: Limitar as origens permitidas
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'config.urls'
 
