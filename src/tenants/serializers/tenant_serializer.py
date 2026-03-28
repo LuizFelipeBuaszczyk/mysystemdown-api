@@ -5,7 +5,6 @@ from tenants.serializers.domain_serializer import DomainReadSerializer, DomainWr
 
 class TenantWriteSerializer(serializers.Serializer):
     client = ClientWriteSerializer()
-    domain = DomainWriteSerializer()
 
 class TenantReadSerializer(serializers.Serializer):
     client = ClientReadSerializer()

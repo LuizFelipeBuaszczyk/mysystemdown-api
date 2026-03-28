@@ -1,4 +1,4 @@
-
+from django.db import transaction
 from tenants.repositories.client_repository import ClientRepository
 from tenants.repositories.domain_repository import DomainRepository
 from iam.services.membership_service import MembershipService
@@ -15,20 +15,24 @@ class TenantService():
     @staticmethod
     def create_tenant(data: dict, user: User):
         logger.info(f"Starting tenant service create_tenant - user_id: {user.id}")
-        client = data["client"]
-        client = ClientRepository.create_client(client)
+        
+        with transaction.atomic():
+            client = data["client"]
+            client = ClientRepository.create_client(client)
 
-        domain = data["domain"]
-        domain["tenant"] = client
-        domain = DomainRepository.create_domain(data["domain"])
+            domain = {
+                'domain': client.schema_name,
+                'tenant': client
+            } 
+            domain = DomainRepository.create_domain(domain)
 
-        membership = MembershipService.create_membership(
-            data={
-                "user": user,
-                "group": Group.objects.get(name="owner"),
-                "tenant": client
-            }
-        )
+            membership = MembershipService.create_membership(
+                data={
+                    "user": user,
+                    "group": Group.objects.get(name="owner"),
+                    "tenant": client
+                }
+            )
 
         return {
             "client": client,
