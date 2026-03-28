@@ -29,23 +29,23 @@ class AuthService:
         if not user.is_verified:
             raise AccountNotVerifiedError("User is not verified")
         
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
+        refresh_token = RefreshToken.for_user(user)
+        access_token = str(refresh_token.access_token)
         
         return {
             "access_token": access_token,
-            "refresh": str(refresh)
+            "refresh_token": str(refresh_token)
         }
         
     @staticmethod
     def refresh_token(data: dict):
-        logger.debug(f"Starting AuthService refresh_token - refresh: {data['refresh']}")
+        logger.debug(f"Starting AuthService refresh_token - refresh_token: {data['refresh_token']}")
         try:
-            refresh = RefreshToken(data["refresh"])
+            refresh = RefreshToken(data["refresh_token"])
 
             return {
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),  
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh),  
             }
 
         except TokenError:
