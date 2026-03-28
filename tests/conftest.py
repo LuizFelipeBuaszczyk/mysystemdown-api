@@ -1,6 +1,5 @@
 import pytest
 from tenants.models import Client, Domain
-from iam.models import Membership, Group
 from rest_framework.test import APIClient
 from django.core.management import call_command
 from django_tenants.utils import schema_context
@@ -35,11 +34,11 @@ def public_tenant(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock(): ## Desbloqueia o acesso ao banco 
         tenant, created = Client.objects.get_or_create(
             schema_name="public",
-            defaults={"name": "Public"}
+            defaults={"name": "public"}
         )
 
         Domain.objects.get_or_create(
-            domain="localhost",
+            domain="public",
             tenant=tenant,
             defaults={"is_primary": True}
         )
@@ -67,14 +66,19 @@ def auth_user(django_db_setup, django_db_blocker, public_tenant):
 
 @pytest.fixture
 def public_tenant_client(public_tenant):
-    from django_tenants.test.client import TenantClient
-    return TenantClient(public_tenant)
+    client =  APIClient()
+    client.credentials(
+        HTTP_X_TENANT=public_tenant.schema_name
+    )
+    client.tenant = public_tenant
+    return client
+
 
 @pytest.fixture(scope="session")
 def tenant1(create_tenant, auth_user):
     tenant = create_tenant(
         schema_name="tenant1",
-        domain="tenant1.localhost",
+        domain="tenant1",
         name="Tenant 1",
         user=auth_user
     )
@@ -83,13 +87,15 @@ def tenant1(create_tenant, auth_user):
     
 @pytest.fixture
 def tenant_client(tenant1, auth_user):
-    from django_tenants.test.client import TenantClient
     from rest_framework_simplejwt.tokens import RefreshToken
 
-    client = TenantClient(tenant1)
-
+    client = APIClient()
     token = RefreshToken.for_user(auth_user)
-    client.defaults["HTTP_AUTHORIZATION"] = f"Bearer {token.access_token}"
+    client.credentials(
+        HTTP_AUTHORIZATION=f"Bearer {token.access_token}",
+        HTTP_X_TENANT=tenant1.schema_name
+    )    
+    client.tenant = tenant1
     return client
 
 

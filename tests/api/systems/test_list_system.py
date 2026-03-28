@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from django_tenants.utils import schema_context
 
 @pytest.mark.django_db
 def test_empty_list_systems(tenant_client):
@@ -13,8 +14,9 @@ def test_empty_list_systems(tenant_client):
 def test_list_systems(tenant_client, systems):
     url = reverse("systems-list")
     
-    for system in systems:
-        system.save()
+    with schema_context(tenant_client.tenant.schema_name):
+        for system in systems:
+            system.save()
     
     response = tenant_client.get(path=url)
     assert response.status_code == 200

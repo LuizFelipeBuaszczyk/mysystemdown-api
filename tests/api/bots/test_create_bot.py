@@ -20,7 +20,9 @@ def test_create_bot_success(tenant_client, bot_post_data, system):
     
     assert response.status_code == 201
     
-    bot = Bot.objects.get(id=response.data["id"])
+    with schema_context(tenant_client.tenant.schema_name):
+        bot = Bot.objects.get(id=response.data["id"])
+    
     assert bot is not None
     assert bot.bot_name == bot_post_data["bot_name"]
     assert f"{PREFIX_BOT_TOKEN}{bot.prefix_token}" == response.data["api_token"][:14]
