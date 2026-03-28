@@ -8,6 +8,6 @@ class Command(BaseCommand):
             return
         
         tenant = Client.objects.create(schema_name="public", name="Public")
-        domain = Domain.objects.create(domain="localhost", tenant=tenant, is_primary=True)
+        domain = Domain.objects.create(domain="public", tenant=tenant, is_primary=True)
 
         self.stdout.write(self.style.SUCCESS("Tenant seed completed successfully"))
