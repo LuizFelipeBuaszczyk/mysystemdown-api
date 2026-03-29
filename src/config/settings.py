@@ -13,6 +13,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -41,10 +42,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 SHARED_APPS = [
+    'corsheaders',
     'django_tenants',
     'tenants',
 
-    'corsheaders',
     'rest_framework',
     'drf_spectacular',
     'django.contrib.admin',
@@ -102,8 +103,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# TODO: Limitar as origens permitidas
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [os.getenv("WEB_HOST", "http://localhost:3000")]
+CORS_ALLOW_HEADERS = [
+    *default_headers,
+    "http_authorization",
+    "x-tenant",
+]
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+
+CSRF_TRUSTED_ORIGINS = [os.getenv("WEB_HOST", "http://localhost:3000")]
 
 ROOT_URLCONF = 'config.urls'
 
