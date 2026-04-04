@@ -76,7 +76,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1), # TODO: Modificar para ficar apenas 10 minutos de expiração, no momento 1 hora apenas para testes
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
