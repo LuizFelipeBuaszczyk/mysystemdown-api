@@ -1,3 +1,5 @@
+from config.settings import SIMPLE_JWT
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -28,8 +30,22 @@ class LoginView(APIView):
         result = AuthService.login(
             data=serializer.validated_data
         )
-        return Response(
-            result,
-            status=status.HTTP_200_OK
-            )
+
+        response = Response(result, status=status.HTTP_200_OK)
+        response.set_cookie(
+            key="refresh_token",
+            value=result["refresh_token"],
+            httponly=True,
+            max_age=SIMPLE_JWT.get("REFRESH_TOKEN_LIFETIME").total_seconds(),
+            path="/"
+        )
+        response.set_cookie(
+            key="auth_token",
+            value=result["access_token"],
+            httponly=True,
+            max_age=SIMPLE_JWT.get("ACCESS_TOKEN_LIFETIME").total_seconds(),
+            path="/"
+        )
+    
+        return response
         
