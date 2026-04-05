@@ -1,4 +1,5 @@
 import jwt
+import hashlib
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
@@ -36,7 +37,7 @@ class AuthService:
         refresh_token = str(refresh_token)
         
         token = jwt.decode(refresh_token, options={"verify_signature": False})
-        RedisCache.set(f"refresh_token:{token['jti']}", refresh_token, timeout=lifetime)  # TODO: Armazenar hash do token
+        RedisCache.set(f"refresh_token:{token['jti']}", hashlib.sha256(refresh_token.encode()).hexdigest(), timeout=lifetime)  # TODO: Armazenar hash do token
 
         return {
             "access_token": access_token,
@@ -59,7 +60,7 @@ class AuthService:
         try:
             token = jwt.decode(data["refresh_token"], options={"verify_signature": False})
             refresh_token = RedisCache.get(f"refresh_token:{token['jti']}")
-            if refresh_token != data["refresh_token"]:
+            if refresh_token != hashlib.sha256(data["refresh_token"].encode()).hexdigest():
                 raise InvalidTokenError("Refresh token is invalid or expired")
             
             refresh = RefreshToken(data["refresh_token"])
