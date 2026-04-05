@@ -37,7 +37,7 @@ class AuthService:
         refresh_token = str(refresh_token)
         
         token = jwt.decode(refresh_token, options={"verify_signature": False})
-        RedisCache.set(f"refresh_token:{token['jti']}", hashlib.sha256(refresh_token.encode()).hexdigest(), timeout=lifetime)  # TODO: Armazenar hash do token
+        RedisCache.set(f"refresh_token:{token['jti']}", hashlib.sha256(refresh_token.encode()).hexdigest(), timeout=lifetime)
 
         return {
             "access_token": access_token,
