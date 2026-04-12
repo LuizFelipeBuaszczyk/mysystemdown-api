@@ -1,5 +1,5 @@
+from typing import Callable
 from django.db import transaction
-from redis import client
 from tenants.repositories.client_repository import ClientRepository
 from tenants.repositories.domain_repository import DomainRepository
 from iam.services.membership_service import MembershipService
@@ -45,3 +45,10 @@ class TenantService():
         logger.info(f"Starting service get_tenants_by_user - user_id: {user.id}")
         clients = ClientRepository.get_clients_by_user_id(user.id)
         return clients
+
+    @classmethod
+    def get_tenant(cls, user: User, get_object: Callable) -> dict:
+        logger.info(f"Starting service get_tenant - user_id: {user.id}")
+        
+        
+        return get_object()

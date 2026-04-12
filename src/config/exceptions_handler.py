@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
-    logger.error(f"Error: {exc}")
+    logger.error(f"Error: {type(exc).__name__} - {str(exc)}")
 
     if isinstance(exc, drf_validation_error):
         return Response(

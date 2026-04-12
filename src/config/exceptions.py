@@ -9,3 +9,8 @@ class AuthenticationError(BusinessRuleError):
     status_code = 401
     default_detail = "Authentication failed"
     default_code = "authentication_error"
+
+class NotFoundError(BusinessRuleError):
+    status_code = 404
+    default_detail = "Resource not found"
+    default_code = "not_found_error"
