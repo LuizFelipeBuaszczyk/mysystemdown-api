@@ -7,7 +7,12 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 class ServiceRepository:
-    
+
+    @staticmethod
+    def get_all_services():
+        logger.debug(f"Starting ServiceRepository get_all_services")
+        return Service.objects.all()
+
     @staticmethod
     def get_by_id(service_id: UUID):
         logger.debug(f"Starting ServiceRepository get_by_id - service_id: {service_id}")

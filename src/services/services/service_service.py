@@ -8,6 +8,11 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 class ServiceService:
+
+    @staticmethod
+    def list_services():
+        logger.info("Starting ServiceService list_services")
+        return ServiceRepository.get_all_services()
     
     @staticmethod
     def get_service(service_id: UUID):

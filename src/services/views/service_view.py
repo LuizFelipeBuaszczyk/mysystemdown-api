@@ -15,6 +15,9 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 @extend_schema_view(
+    list=extend_schema(
+        responses={200: ServiceReadSerializer(many=True)},
+    ),
     retrieve=extend_schema(
         responses={200: ServiceReadSerializer},
     ),
@@ -30,7 +33,16 @@ class ServiceViewSet(GenericViewSet):
     permission_classes = [ServicePermission]
     
     def get_queryset(self):
-        return Service.objects.filter(id = self.kwargs.get('pk'))
+        return Service.objects.all()
+    
+    def list(self, request):
+        logger.info(f"Listing services - user_id: {request.user.id}")
+        services = ServiceService.list_services() 
+        
+        return Response(
+            data=ServiceReadSerializer(services, many=True).data,
+            status=200
+        )
     
     def retrieve(self, request, pk: UUID):
         logger.info(f"Retrieving service - user_id: {request.user.id}, pk: {pk}")
